@@ -2,9 +2,9 @@
 
 namespace Inertia;
 
-use CodeIgniter\Config\View;
-use CodeIgniter\HTTP\IncomingRequest;
-use CodeIgniter\HTTP\Response as HttpResponse;
+use CI_Controller;
+use CI_Input;
+use CI_Output;
 
 class Response
 {
@@ -14,8 +14,13 @@ class Response
     protected $rootView;
     protected $version;
 
+    private CI_Controller $CI;
+
     public function __construct($component, $props, $rootView = 'app', $version = null)
     {
+        $this->CI =& get_instance();
+        $this->CI->load->helper('url');
+
         $this->component = $component;
         $this->props = $props;
         $this->rootView = $rootView;
@@ -46,12 +51,12 @@ class Response
 
     public function __toString()
     {
-        $partialData = $this->request()->getHeader('X-Inertia-Partial-Data');
+        $partialData = $this->request()->get_header('X-Inertia-Partial-Data');
         $only = array_filter(
             explode(',', $partialData ? $partialData->getValue() : '')
         );
 
-        $partialComponent = $this->request()->getHeader('X-Inertia-Partial-Component');
+        $partialComponent = $this->request()->get_header('X-Inertia-Partial-Component');
         $props = ($only && ($partialComponent ? $partialComponent->getValue() : '') === $this->component)
             ? array_only($this->props, $only)
             : $this->props;
@@ -63,7 +68,7 @@ class Response
         $page = [
             'component' => $this->component,
             'props' => $props,
-            'url' => $this->request()->detectPath() !== '/' ?  '/'. $this->request()->detectPath() : '/',
+            'url' => uri_string() !== '/' ?  '/'. uri_string() : '/',
             'version' => $this->version,
         ];
 
@@ -72,12 +77,13 @@ class Response
 
     private function make($page): string
     {
-        $inertia = $this->request()->getHeader('X-Inertia');
+        $request_headers = getallheaders();
+        $inertia = $this->CI->input->getHeader('X-Inertia');
 
-        if ($inertia && $inertia->getValue()) {
-            $this->response()->setHeader('Vary', 'Accept');
-            $this->response()->setHeader('X-Inertia', 'true');
-            $this->response()->setHeader('Content-Type', 'application/json');
+        if (isset($request_headers['X-Inertia']) && $request_headers['X-Inertia'] === 'true') {
+            $this->CI->output->set_header('Vary: Accept');
+            $this->CI->output->set_header('X-Inertia: true');
+            $this->CI->output->set_header('Content-Type: application/json');
 
             return json_encode($page);
         }
@@ -87,18 +93,20 @@ class Response
 
     private function view($page): string
     {
-        return Services::renderer()
-            ->setData($this->viewData + ['page' => $page], 'raw')
-            ->render($this->rootView);
+        return $this->CI->load->view(
+            $this->rootView,
+            array_merge($this->viewData, ['page' => $page]),
+            true
+        );
     }
 
-    private function request(): IncomingRequest
+    private function request(): CI_Input
     {
-        return Services::request();
+        return  $this->CI->input;
     }
 
-    private function response(): HttpResponse
+    private function response(): CI_Output
     {
-        return Services::response();
+        return  $this->CI->output;
     }
 }

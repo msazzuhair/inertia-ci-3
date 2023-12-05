@@ -1,16 +1,8 @@
-# Inertia server-side adapter for CodeIgniter 4
+# Inertia server-side adapter for CodeIgniter 3
 
-![Tests](https://github.com/amiranagram/inertia-codeigniter-4/workflows/Tests/badge.svg)
-[![Total Downloads](https://img.shields.io/packagist/dt/amirami/inertia-codeigniter-4.svg)](https://packagist.org/packages/amirami/inertia-codeigniter-4)
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/amirami/inertia-codeigniter-4.svg)](https://packagist.org/packages/amirami/inertia-codeigniter-4)
+Adapted from [Inertia Codeigniter 4](https://github.com/amiranagram/inertia-codeigniter-4)
 
 ## Installation
-
-You can install the package via composer:
-
-```bash
-composer require amirami/inertia-codeigniter-4
-```
 
 ## Usage
 
@@ -23,12 +15,6 @@ composer test
 ## Roadmap
 
 ### Tests
-
-* Controller test
-* Helper test. `inertia()` helper.
-* Inertia headers test. An Inertia request should return an Inertia response (JSON response).
-* Shared data test. It should be accesses in any response.
-* Lazy props test.
 
 ## Changelog
 
@@ -44,7 +30,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Amir Rami](https://github.com/amirami)
+- [Inertia Codeigniter 4](https://github.com/amiranagram/inertia-codeigniter-4)
 - [All Contributors](../../contributors)
 
 ## License

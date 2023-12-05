@@ -2,24 +2,30 @@
 
 namespace Inertia;
 
-use CodeIgniter\HTTP\RedirectResponse;
-
 class Factory
 {
+    private \CI_Controller $CI;
+
+    public function __construct()
+    {
+        $this->CI =& get_instance();
+        $this->CI->load->helper('url');
+    }
+
     /**
      * @var array
      */
-    protected $sharedProps = [];
+    protected array $sharedProps = [];
 
     /**
      * @var string
      */
-    protected $rootView = 'app';
+    protected string $rootView = 'app';
 
     /**
      * @var mixed
      */
-    protected $version;
+    protected mixed $version = null;
 
     /**
      * @param string $name
@@ -81,16 +87,16 @@ class Factory
      * @param $component
      * @param array $props
      *
-     * @return string
      */
-    public function render($component, $props = []): string
+    public function render($component, array $props = [])
     {
-        return new Response(
-            $component,
-            array_merge($this->sharedProps, $props),
-            $this->rootView,
-            $this->getVersion()
-        );
+        $this->CI->load
+            ->view('app.php', array_merge(['page' => [
+                'component' => $component,
+                'url' => '/' . uri_string(),
+                'props' => $props,
+                'version' => $this->getVersion()
+            ]]));
     }
 
     /**
@@ -105,19 +111,11 @@ class Factory
 
     /**
      * @param $uri
-     * @return RedirectResponse
+     * @return void
      */
-    public function redirect($uri): RedirectResponse
+    public function redirect($uri): void
     {
-        return $this->redirectResponse()->to($uri, 303);
-    }
-
-    /**
-     * @return RedirectResponse
-     */
-    public function redirectResponse(): RedirectResponse
-    {
-        return Services::redirectResponse(null, true);
+        redirect($uri, code: 303);
     }
 
     public function location($url)
