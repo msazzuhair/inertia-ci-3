@@ -90,6 +90,18 @@ class Factory
      */
     public function render($component, array $props = [])
     {
+        $request_headers = getallheaders();
+        if ($request_headers['X-Inertia']) {
+            $this->CI->output
+                ->set_content_type('application/json')
+                ->set_header('X-Inertia: true')
+                ->set_output(json_encode([
+                    'component' => $component,
+                    'url' => '/' . uri_string(),
+                    'props' => $props,
+                    'version' => $this->getVersion()
+                ]));
+        }
         $this->CI->load
             ->view('app.php', array_merge(['page' => [
                 'component' => $component,
