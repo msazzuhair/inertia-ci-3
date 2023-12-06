@@ -91,7 +91,7 @@ class Factory
     public function render($component, array $props = [])
     {
         $request_headers = getallheaders();
-        if ($request_headers['X-Inertia']) {
+        if (isset($request_headers['X-Inertia']) && $request_headers['X-Inertia'] === 'true') {
             $this->CI->output
                 ->set_content_type('application/json')
                 ->set_header('X-Inertia: true')
@@ -101,14 +101,15 @@ class Factory
                     'props' => $props,
                     'version' => $this->getVersion()
                 ]));
+        } else {
+            $this->CI->load
+                ->view('app.php', array_merge(['page' => [
+                    'component' => $component,
+                    'url' => '/' . uri_string(),
+                    'props' => $props,
+                    'version' => $this->getVersion()
+                ]]));
         }
-        $this->CI->load
-            ->view('app.php', array_merge(['page' => [
-                'component' => $component,
-                'url' => '/' . uri_string(),
-                'props' => $props,
-                'version' => $this->getVersion()
-            ]]));
     }
 
     /**
