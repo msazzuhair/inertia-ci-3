@@ -129,7 +129,7 @@ function vite($entry)
 
 function is_development()
 {
-    return config_item('app.env') === 'local' || config_item('app.env') === 'development' || config_item('app.env') === null;
+    return config_item('app_env') === 'local' || config_item('app_env') === 'development' || config_item('app_env') === null;
 }
 
 // ----------------------
