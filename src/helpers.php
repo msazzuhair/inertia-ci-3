@@ -4,11 +4,11 @@ use Inertia\Factory;
 use Inertia\Services;
 
 
-if (! function_exists('inertia')) {
+if (!function_exists('inertia')) {
     /**
      * @param null $component
      * @param array $props
-     * @return Factory|string
+     * @return void
      */
     function inertia($component = null, $props = [])
     {
@@ -22,7 +22,7 @@ if (! function_exists('inertia')) {
     }
 }
 
-if (! function_exists('array_only')) {
+if (!function_exists('array_only')) {
     /**
      * @param $array
      * @param $keys
@@ -30,11 +30,11 @@ if (! function_exists('array_only')) {
      */
     function array_only($array, $keys): array
     {
-        return array_intersect_key($array, array_flip((array) $keys));
+        return array_intersect_key($array, array_flip((array)$keys));
     }
 }
 
-if (! function_exists('array_get')) {
+if (!function_exists('array_get')) {
     /**
      * @param $array
      * @param $key
@@ -43,7 +43,7 @@ if (! function_exists('array_get')) {
      */
     function array_get($array, $key, $default = null): mixed
     {
-        if (! is_array($array)) {
+        if (!is_array($array)) {
             return closure_call($default);
         }
 
@@ -71,7 +71,7 @@ if (! function_exists('array_get')) {
     }
 }
 
-if (! function_exists('array_set')) {
+if (!function_exists('array_set')) {
     /**
      * @param $array
      * @param $key
@@ -96,7 +96,7 @@ if (! function_exists('array_set')) {
             // If the key doesn't exist at this depth, we will just create an empty array
             // to hold the next value, allowing us to create the arrays to hold final
             // values at the correct depth. Then we'll keep digging into the array.
-            if (! isset($array[$key]) || ! is_array($array[$key])) {
+            if (!isset($array[$key]) || !is_array($array[$key])) {
                 $array[$key] = [];
             }
 
@@ -109,7 +109,7 @@ if (! function_exists('array_set')) {
     }
 }
 
-if (! function_exists('closure_call')) {
+if (!function_exists('closure_call')) {
     /**
      * @param $closure
      * @return mixed
@@ -129,7 +129,7 @@ function vite($entry)
 
 function is_development()
 {
-    return config_item('app.env') === 'local' || config_item('app.env') === 'development' || config_item('app.env') === null;
+    return config_item('app_env') === 'local' || config_item('app_env') === 'development' || config_item('app_env') === null;
 }
 
 // ----------------------
@@ -221,4 +221,35 @@ function css_urls($entry)
     }
 
     return $urls;
+}
+
+/**
+ * External redirects
+ *
+ * Sometimes it's necessary to redirect to an external website, or even another
+ * non-Inertia endpoint in your app while handling an Inertia request. This can
+ * be accomplished using a server-side initiated window.location visit via the
+ * Inertia::location() method.
+ *
+ * @param string $uri URL
+ * @return    void
+ */
+function inertia_location($uri = '', $method = 'auto', $code = NULL)
+{
+    if (!preg_match('#^(\w+:)?//#i', $uri)) {
+        $uri = site_url($uri);
+    }
+
+    $CI =& get_instance();
+
+    $request_headers = getallheaders();
+    if (isset($request_headers['X-Inertia']) && $request_headers['X-Inertia'] === 'true') {
+        $CI->output
+            ->set_content_type('application/json')
+            ->set_header('X-Inertia-Location: ' . $uri)
+            ->set_status_header(409)
+            ->set_output(json_encode([]));
+    } else {
+        redirect()->to($uri, $method = 'auto', $code = NULL);
+    }
 }
