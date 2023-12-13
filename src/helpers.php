@@ -236,19 +236,17 @@ function css_urls($entry)
  */
 function inertia_location($uri = '', $method = 'auto', $code = NULL)
 {
+    $CI =& get_instance();
+
     if (!preg_match('#^(\w+:)?//#i', $uri)) {
         $uri = site_url($uri);
     }
 
-    $CI =& get_instance();
-
     $request_headers = getallheaders();
     if (isset($request_headers['X-Inertia']) && $request_headers['X-Inertia'] === 'true') {
-        $CI->output
-            ->set_content_type('application/json')
-            ->set_header('X-Inertia-Location: ' . $uri)
-            ->set_status_header(409)
-            ->set_output(json_encode([]));
+        header('Content-Type: application/json');
+        header("HTTP/1.1 409 Conflict");
+        header("X-Inertia-Location: /auth/login");
     } else {
         redirect()->to($uri, $method = 'auto', $code = NULL);
     }
