@@ -247,6 +247,7 @@ function inertia_location($uri = '', $method = 'auto', $code = NULL)
         header('Content-Type: application/json');
         header("HTTP/1.1 409 Conflict");
         header("X-Inertia-Location: /auth/login");
+        die();
     } else {
         redirect()->to($uri, $method = 'auto', $code = NULL);
     }
