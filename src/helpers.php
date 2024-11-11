@@ -243,7 +243,7 @@ function inertia_location($uri = '', $method = 'auto', $code = NULL)
     }
 
     $request_headers = getallheaders();
-    if (isset($request_headers['X-Inertia']) && $request_headers['X-Inertia'] === 'true') {
+    if (isset($request_headers['x-inertia']) && $request_headers['x-inertia'] === 'true') {
         header('Content-Type: application/json');
         header("HTTP/1.1 409 Conflict");
         header("X-Inertia-Location: /auth/login");

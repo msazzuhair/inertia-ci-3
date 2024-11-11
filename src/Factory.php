@@ -91,10 +91,10 @@ class Factory
     public function render($component, array $props = [])
     {
         $request_headers = getallheaders();
-        if (isset($request_headers['X-Inertia']) && $request_headers['X-Inertia'] === 'true') {
+        if (isset($request_headers['x-inertia']) && $request_headers['x-inertia'] === 'true') {
             $this->CI->output
                 ->set_content_type('application/json')
-                ->set_header('X-Inertia: true')
+                ->set_header('x-inertia: true')
                 ->set_output(json_encode([
                     'component' => $component,
                     'url' => '/' . uri_string(),

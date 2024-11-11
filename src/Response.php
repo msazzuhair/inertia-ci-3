@@ -78,11 +78,11 @@ class Response
     private function make($page): string
     {
         $request_headers = getallheaders();
-        $inertia = $this->CI->input->getHeader('X-Inertia');
+        $inertia = $this->CI->input->getHeader('x-inertia');
 
-        if (isset($request_headers['X-Inertia']) && $request_headers['X-Inertia'] === 'true') {
+        if (isset($request_headers['x-inertia']) && $request_headers['x-inertia'] === 'true') {
             $this->CI->output->set_header('Vary: Accept');
-            $this->CI->output->set_header('X-Inertia: true');
+            $this->CI->output->set_header('x-inertia: true');
             $this->CI->output->set_header('Content-Type: application/json');
 
             return json_encode($page);
