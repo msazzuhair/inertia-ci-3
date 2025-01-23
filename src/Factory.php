@@ -91,6 +91,9 @@ class Factory
     public function render($component, array $props = [])
     {
         $request_headers = getallheaders();
+        if (is_array($request_headers)) {
+            $request_headers = array_change_key_case($request_headers);
+        }
         if (isset($request_headers['x-inertia']) && $request_headers['x-inertia'] === 'true') {
             $this->CI->output
                 ->set_content_type('application/json')

@@ -243,6 +243,9 @@ function inertia_location($uri = '', $method = 'auto', $code = NULL)
     }
 
     $request_headers = getallheaders();
+    if (is_array($request_headers)) {
+        $request_headers = array_change_key_case($request_headers);
+    }
     if (isset($request_headers['x-inertia']) && $request_headers['x-inertia'] === 'true') {
         header('Content-Type: application/json');
         header("HTTP/1.1 409 Conflict");
